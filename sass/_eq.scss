@@ -5,9 +5,9 @@
 $EQ-Selectors: ();
 
 //////////////////////////////
-// Error Mixin
+// Error function
 //////////////////////////////
-@mixin EQSTATECHECK($states, $name) {
+@function EQSTATECHECK($states, $name) {
   $EQ-Error: 'You need to include a state for the `#{$name}` mixin!';
   @if (length($states) == 0) {
     @if feature-exists(at-error) {
@@ -16,9 +16,10 @@ $EQ-Selectors: ();
     @else {
       @warn $EQ-Error;
     }
+    @return false;
   }
   @else {
-    @content;
+    @return true;
   }
 }
 
@@ -28,23 +29,15 @@ $EQ-Selectors: ();
 // $states - List of states to apply styling to; @include eq(small, medium, large)
 //////////////////////////////
 @mixin eq($states...) {
-  @include EQSTATECHECK('eq', $states) {
-    //////////////////////////////
-    // Markup based Element Queries
-    //////////////////////////////
-    $extend: unique-id();
-    @at-root {
-      %#{$extend} {
-        @content;
-      }
-    }
+  @if EQSTATECHECK('eq', $states) {
     @each $state in $states {
       &[data-eq-state$="#{$state}"] {
-        @extend %#{$extend};
+        @content;
       }
     }
   }
 }
+
 
 //////////////////////////////
 // Element Query Stack!
@@ -60,16 +53,7 @@ $EQ-Selectors: ();
     $states: nth($states, 1);
   }
 
-  @include EQSTATECHECK('eq', $states) {
-    //////////////////////////////
-    // Markup based Element Queries
-    //////////////////////////////
-    $extend: unique-id();
-    @at-root {
-      %#{$extend} {
-        @content;
-      }
-    }
+  @if EQSTATECHECK('eq', $states) {
     @if list-separator($states) == 'space' {
       $stateApply: '';
 
@@ -78,13 +62,13 @@ $EQ-Selectors: ();
       }
 
       &#{$stateApply} {
-        @extend %#{$extend};
+        @content;
       }
     }
     @else {
       @each $state in $states {
         &[data-eq-state~="#{$state}"] {
-          @extend %#{$extend};
+          @content;
         }
       }
     }
