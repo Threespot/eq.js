@@ -99,6 +99,15 @@ $EQ-Selectors: ();
 // $states - Map of `name: size`; @include eq-pts((small: 400, medium: 600, large: 900))
 //////////////////////////////
 @mixin eq-pts($states) {
+  // Prevent FOUC by hiding content until eq.js runs
+  opacity: 0;
+
+  // Show content once eq.js runs, or if no-js
+  &[data-eq-state],
+  .no-js & {
+    opacity: 1;
+  }
+
   &:before {
     display: none;
     content: '#{str-slice(inspect($states), 2, -2)}';
@@ -108,6 +117,8 @@ $EQ-Selectors: ();
     $EQ-Selectors: append($EQ-Selectors, '#{&}', 'comma') !global;
   }
 }
+
+
 
 //////////////////////////////
 // Element Query Selectors

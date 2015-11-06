@@ -184,7 +184,7 @@
 
       // Determine what to set the attribute to
       if (eqState === null) {
-        obj.removeAttribute('data-eq-state');
+        obj.setAttribute('data-eq-state', '');
       }
       else {
         obj.setAttribute('data-eq-state', eqState);
